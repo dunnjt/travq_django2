@@ -109,33 +109,32 @@ class CreateUser(graphene.Mutation):
         )
 
 class CreateAnswer(graphene.Mutation):
-    id = graphene.Int()
-    author = graphene.String()
-    votes = graphene.Int()
+    questionId = graphene.Int()
+    userId = graphene.String()  
     createdOn = graphene.Date()
     answer = graphene.String()
 
     #2
     class Arguments:
-        votes = graphene.Int()
-        answer = graphene.String()
-        author = graphene.String()
-        question = graphene.String()
+        questionId = graphene.String()
+        userId = graphene.String()       
+        answer = graphene.String()       
+        
 
     #3
-    def mutate(self, info, answer, votes, user, question):
-        u = User.objects.get(id=user)
-        q = Question.objects.get(id=question)
+    def mutate(self, info, questionId, userId, answer):
+        u = User.objects.get(id=userId)
+        q = Question.objects.get(id=questionId)
         answer = Answer(
             answer=answer,
-            votes=votes,
+            votes=0,
             author=u,
             question=q
             )
         answer.save()
 
-        return CreateAnswer(
-            id=answer.id,
+        return CreateAnswer(            
+            answer=answer.answer                   
         )
 
 class CreateVote(graphene.Mutation):
