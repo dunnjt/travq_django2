@@ -31,7 +31,7 @@ class TagType(DjangoObjectType):
 class Query(graphene.ObjectType):
     user = graphene.Field(UserType, id=graphene.String())
     question = graphene.Field(QuestionType, id=graphene.String())
-    all_questions = graphene.List(QuestionType)
+    all_questions = graphene.List(QuestionType, tags=graphene.List(graphene.String), search=graphene.String(), offset=graphene.Int(), limit=graphene.Int())
     answer = graphene.Field(AnswerType, id=graphene.String())
     tag = graphene.List(TagType)
     badge = graphene.List(BadgeType)
@@ -43,7 +43,7 @@ class Query(graphene.ObjectType):
     def resolve_question(self, info, id, **kwargs):
         return Question.objects.get(id=id)
 
-    def resolve_all_questions(self, info, **kwards):
+    def resolve_all_questions(self, info, tags, search, offset, limit, **kwards):
         return Question.objects.all()
 
     def resolve_tag(self, info, **kwargs):
@@ -110,7 +110,7 @@ class CreateUser(graphene.Mutation):
 
 class CreateAnswer(graphene.Mutation):
     id = graphene.Int()
-    user = graphene.String()
+    author = graphene.String()
     votes = graphene.Int()
     createdOn = graphene.Date()
     answer = graphene.String()
@@ -119,7 +119,7 @@ class CreateAnswer(graphene.Mutation):
     class Arguments:
         votes = graphene.Int()
         answer = graphene.String()
-        user = graphene.String()
+        author = graphene.String()
         question = graphene.String()
 
     #3
@@ -129,7 +129,7 @@ class CreateAnswer(graphene.Mutation):
         answer = Answer(
             answer=answer,
             votes=votes,
-            user=u,
+            author=u,
             question=q
             )
         answer.save()
@@ -164,17 +164,14 @@ class CreateLogon(graphene.Mutation):
         password=graphene.String()
         email=graphene.String()
 
-    def mutate(self, info, password, email):
-        user = User.objects.get(password=password, email=email)
+    def mutate(self, info, password, email):       
 
-        return CreateLogon(
-            id=user.id
-        )
+        return User.objects.get(password=password, email=email)
 
 
 class CreateQuestion(graphene.Mutation):
     id = graphene.Int()
-    user = graphene.String()
+    userId = graphene.String()
     question = graphene.String()
     tags = graphene.List(graphene.String)
     createdOn = graphene.Date()
@@ -183,21 +180,21 @@ class CreateQuestion(graphene.Mutation):
     class Arguments:
         question = graphene.String()
         tags = graphene.List(graphene.String)
-        user = graphene.String()
+        userId = graphene.String()
 
     #3
-    def mutate(self, info, question, tags, user):
-        u = User.objects.get(id=user)
+    def mutate(self, info, question, tags, userId):
+        u = User.objects.get(id=userId)
         question = Question(
             question=question,
-            user=u
+            author=u
             )
         question.save()
 
         for t in tags:
-            temp = Tag(tag=t)
+            temp = Tag(tags=t)
             temp.save()
-            question.tag.add(temp)
+            question.tags.add(temp)
             question.save()
 
         return CreateQuestion(

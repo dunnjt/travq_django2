@@ -22,13 +22,13 @@ class Tag(models.Model):
     tags = models.TextField()
 
 class Question(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.TextField()
     createdOn = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(Tag)
 
 class Answer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     answer = models.TextField()
     votes = models.IntegerField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
