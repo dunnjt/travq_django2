@@ -19,16 +19,16 @@ class User(models.Model):
     skills = models.ManyToManyField(Skill)
 
 class Tag(models.Model):
-    tag = models.TextField()
+    tags = models.TextField()
 
 class Question(models.Model):
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.TextField()
     createdOn = models.DateTimeField(default=timezone.now)
-    tag = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
 
 class Answer(models.Model):
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     answer = models.TextField()
     votes = models.IntegerField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)

@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='badge',
-            name='userId',
+            name='user',
         ),
         migrations.RemoveField(
             model_name='skill',
-            name='userId',
+            name='user',
         ),
         migrations.AddField(
             model_name='user',

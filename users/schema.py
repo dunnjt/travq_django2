@@ -110,7 +110,7 @@ class CreateUser(graphene.Mutation):
 
 class CreateAnswer(graphene.Mutation):
     id = graphene.Int()
-    userId = graphene.String()
+    user = graphene.String()
     votes = graphene.Int()
     createdOn = graphene.Date()
     answer = graphene.String()
@@ -119,17 +119,17 @@ class CreateAnswer(graphene.Mutation):
     class Arguments:
         votes = graphene.Int()
         answer = graphene.String()
-        userId = graphene.String()
+        user = graphene.String()
         question = graphene.String()
 
     #3
-    def mutate(self, info, answer, votes, userId, question):
-        u = User.objects.get(id=userId)
+    def mutate(self, info, answer, votes, user, question):
+        u = User.objects.get(id=user)
         q = Question.objects.get(id=question)
         answer = Answer(
             answer=answer,
             votes=votes,
-            userId=u,
+            user=u,
             question=q
             )
         answer.save()
@@ -155,12 +155,26 @@ class CreateVote(graphene.Mutation):
             id=answer.id
         )
 
+class CreateLogon(graphene.Mutation):
+    id=graphene.String()
+    password=graphene.String()
+    email=graphene.String()
 
+    class Arguments:
+        password=graphene.String()
+        email=graphene.String()
+
+    def mutate(self, info, password, email):
+        user = User.objects.get(password=password, email=email)
+
+        return CreateLogon(
+            id=user.id
+        )
 
 
 class CreateQuestion(graphene.Mutation):
     id = graphene.Int()
-    userId = graphene.String()
+    user = graphene.String()
     question = graphene.String()
     tags = graphene.List(graphene.String)
     createdOn = graphene.Date()
@@ -169,14 +183,14 @@ class CreateQuestion(graphene.Mutation):
     class Arguments:
         question = graphene.String()
         tags = graphene.List(graphene.String)
-        userId = graphene.String()
+        user = graphene.String()
 
     #3
-    def mutate(self, info, question, tags, userId):
-        u = User.objects.get(id=userId)
+    def mutate(self, info, question, tags, user):
+        u = User.objects.get(id=user)
         question = Question(
             question=question,
-            userId=u
+            user=u
             )
         question.save()
 
@@ -193,19 +207,19 @@ class CreateQuestion(graphene.Mutation):
 
 class CreateSkill(graphene.Mutation):
     id = graphene.Int()
-    userId = graphene.String()
+    user = graphene.String()
     skill = graphene.String()
 
     #2
     class Arguments:
-        userId = graphene.String()
+        user = graphene.String()
         skill = graphene.String()
 
     #3
-    def mutate(self, info, userId, skill):
+    def mutate(self, info, user, skill):
         skill = Skill(
             skill=skill,
-            userId=userId
+            user=user
             )
         skill.save()
 
@@ -215,19 +229,19 @@ class CreateSkill(graphene.Mutation):
 
 class CreateBadge(graphene.Mutation):
     id = graphene.Int()
-    userId = graphene.String()
+    user = graphene.String()
     badge = graphene.String()
 
     #2
     class Arguments:
-        userId = graphene.String()
+        user = graphene.String()
         badge = graphene.String()
 
     #3
-    def mutate(self, info, userId, badge):
+    def mutate(self, info, user, badge):
         skill = Skill(
             skill=badge,
-            userId=userId
+            user=user
             )
         badge.save()
 
@@ -263,3 +277,4 @@ class Mutation(graphene.ObjectType):
     create_badge = CreateBadge.Field()
     create_tag = CreateTag.Field()
     create_vote = CreateVote.Field()
+    create_logon = CreateLogon.Field()

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Answer',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('userId', models.TextField(blank=True)),
+                ('user', models.TextField(blank=True)),
                 ('answer', models.TextField(blank=True)),
                 ('votes', models.IntegerField(blank=True)),
                 ('createdOn', models.DateTimeField(blank=True, default=django.utils.timezone.now)),
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='Question',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('userId', models.TextField(blank=True)),
+                ('user', models.TextField(blank=True)),
                 ('question', models.TextField(blank=True)),
                 ('createdOn', models.DateTimeField(blank=True, default=django.utils.timezone.now)),
                 ('tags', models.TextField(blank=True)),
